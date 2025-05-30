@@ -1,0 +1,85 @@
+body {
+    font-family: 'Arial', sans-serif;
+}
+
+.sidebar {
+    transition: transform 0.3s ease;
+}
+
+.sidebar.active {
+    transform: translateX(0);
+}
+
+.section {
+    display: none;
+}
+
+.section:not(.hidden) {
+    display: block;
+}
+
+.nav-btn.active {
+    background-color: #2563eb;
+    color: white;
+}
+
+.task, .goal {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.task:hover, .goal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.progress-bar-fill, .goal-progress-bar-fill {
+    transition: width 0.5s ease;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.modal {
+    transition: opacity 0.3s ease;
+}
+
+.modal-content {
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.tab.active {
+    border-color: #2563eb;
+    color: #2563eb;
+}
+
+.subtasks li {
+    transition: background-color 0.2s;
+}
+
+.subtasks li:hover {
+    background-color: #374151;
+}
+
+#focus-today {
+    transition: opacity 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(100%);
+    }
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    button, input[type="text"], select {
+        font-size: 16px !important;
+        padding: 12px !important;
+    }
+}

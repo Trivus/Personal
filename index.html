@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مساعدي الشخصي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <div class="flex h-screen">
+        <aside class="sidebar w-64 bg-gray-800 p-6 hidden lg:flex flex-col fixed h-full shadow-lg transition-transform duration-300 transform lg:translate-x-0">
+            <h2 class="text-2xl font-bold text-blue-400 mb-8">مساعدي</h2>
+            <nav class="flex flex-col gap-3 flex-grow">
+                <button data-section="dashboard" class="nav-btn flex items-center gap-3 p-3 rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-100 transition active" aria-label="لوحة اليوم">
+                    <span class="icon text-xl">📅</span> لوحة اليوم
+                </button>
+                <button data-section="goals" class="nav-btn flex items-center gap-3 p-3 rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-100 transition" aria-label="الأهداف">
+                    <span class="icon text-xl">🎯</span> الأهداف
+                </button>
+                <button data-section="achievements" class="nav-btn flex items-center gap-3 p-3 rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-100 transition" aria-label="الإنجازات">
+                    <span class="icon text-xl">🏆</span> الإنجازات
+                </button>
+            </nav>
+        </aside>
+        <main class="flex-1 p-6 lg:mr-64 overflow-y-auto">
+            <section id="dashboard" class="section">
+                <h1 id="greeting" class="text-3xl font-bold text-blue-400 mb-6"></h1>
+                <div class="xp-today mb-6">
+                    <span class="text-lg">نقاط XP اليوم: <span id="xp-today">0</span></span>
+                </div>
+                <div id="focus-today" class="mb-6 bg-gray-800 p-4 rounded-lg hidden">
+                    <h2 class="text-xl font-bold text-blue-400 mb-2">ركز النهاردة</h2>
+                    <p id="focus-suggestion" class="text-gray-100"></p>
+                </div>
+                <div class="filter mb-6">
+                    <label for="task-filter" class="text-gray-100 mr-2">تصفية المهام:</label>
+                    <select id="task-filter" onchange="filterTasks(this.value)" class="bg-gray-700 text-gray-100 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="all">الكل</option>
+                        <option value="completed">مكتمل</option>
+                        <option value="incomplete">غير مكتمل</option>
+                    </select>
+                </div>
+                <div id="tasks-list" class="grid gap-6 mb-8"></div>
+                <div class="progress mb-8">
+                    <span id="progress-text" class="block text-lg mb-2">تقدم اليوم: 0%</span>
+                    <div class="progress-bar bg-gray-700 rounded-full h-3 overflow-hidden">
+                        <div id="progress-bar-fill" class="bg-blue-500 h-full transition-all duration-500"></div>
+                    </div>
+                </div>
+                <div class="filter mb-6">
+                    <label for="goal-filter" class="text-gray-100 mr-2">تصفية الأهداف:</label>
+                    <select id="goal-filter" onchange="updateDashboardGoals(this.value)" class="bg-gray-700 text-gray-100 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="all">الكل</option>
+                        <option value="active">نشط</option>
+                        <option value="completed">مكتمل</option>
+                        <option value="due-soon">موعد قريب</option>
+                        <option value="high-priority">أولوية عالية</option>
+                    </select>
+                </div>
+                <h2 class="text-2xl font-bold text-blue-400 mb-4">الأهداف النشطة</h2>
+                <div id="dashboard-goals" class="grid gap-6"></div>
+            </section>
+            <section id="goals" class="section hidden">
+                <h2 class="text-2xl font-bold text-blue-400 mb-6">الأهداف</h2>
+                <div class="filter mb-6">
+                    <label for="goals-page-filter" class="text-gray-100 mr-2">تصفية:</label>
+                    <select id="goals-page-filter" onchange="updateGoals(this.value)" class="bg-gray-700 text-gray-100 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="all">الكل</option>
+                        <option value="active">نشط</option>
+                        <option value="completed">مكتمل</option>
+                        <option value="due-soon">موعد قريب</option>
+                        <option value="high-priority">أولوية عالية</option>
+                    </select>
+                </div>
+                <div id="goals-list" class="grid gap-6"></div>
+            </section>
+            <section id="achievements" class="section hidden">
+                <h2 class="text-2xl font-bold text-blue-400 mb-6">الإنجازات</h2>
+                <div class="achievement-stats flex flex-wrap gap-6 mb-6">
+                    <div class="text-lg">مستواك الحالي: <span id="level">1</span></div>
+                    <div class="text-lg">نقاط XP: <span id="total-xp">0</span></div>
+                    <div class="text-lg">الأهداف المكتملة: <span id="completed-goals">0</span></div>
+                    <div class="text-lg">متوسط XP يومي: <span id="avg-xp">0</span></div>
+                </div>
+                <div id="badges-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </section>
+        </main>
+        <nav class="bottom-nav lg:hidden fixed bottom-0 left-0 right-0 bg-gray-800 p-4 flex justify-around shadow-lg">
+            <button data-section="dashboard" class="nav-btn text-2xl text-gray-100 hover:text-blue-400 transition relative group" aria-label="لوحة اليوم">
+                📅
+                <span class="absolute bottom-full mb-2 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2">لوحة اليوم</span>
+            </button>
+            <button data-section="goals" class="nav-btn text-2xl text-gray-100 hover:text-blue-400 transition relative group" aria-label="الأهداف">
+                🎯
+                <span class="absolute bottom-full mb-2 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2">الأهداف</span>
+            </button>
+            <button data-section="achievements" class="nav-btn text-2xl text-gray-100 hover:text-blue-400 transition relative group" aria-label="الإنجازات">
+                🏆
+                <span class="absolute bottom-full mb-2 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2">الإنجازات</span>
+            </button>
+        </nav>
+        <button class="fab fixed bottom-20 right-6 w-14 h-14 bg-blue-600 text-white text-3xl rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition transform hover:scale-110" onclick="showAddModal()" aria-label="إضافة عنصر جديد">+</button>
+    </div>
+    <div class="modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" id="add-modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+        <div class="modal-content bg-gray-800 p-8 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
+            <button class="modal-close absolute top-4 right-4 text-gray-100 text-2xl" onclick="closeAddModal()" aria-label="إغلاق">×</button>
+            <h2 id="modal-title" class="text-2xl font-bold text-blue-400 mb-6">إضافة جديدة</h2>
+            <div class="modal-tabs flex gap-4 border-b border-gray-700 mb-6">
+                <button class="tab active px-4 py-2 text-gray-100 border-b-2 border-blue-500" onclick="showTab('task-tab')">مهمة</button>
+                <button class="tab px-4 py-2 text-gray-100 hover:text-blue-400" onclick="showTab('goal-tab')">هدف</button>
+            </div>
+            <div class="tab-content active" id="task-tab">
+                <form id="task-form" class="grid gap-6">
+                    <div class="form-group">
+                        <label for="task-title" class="block text-sm font-medium mb-2">عنوان المهمة</label>
+                        <input type="text" id="task-title" placeholder="عنوان المهمة" required class="bg-gray-700 text-gray-100 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="عنوان المهمة">
+                    </div>
+                    <div class="form-group">
+                        <label for="task-desc" class="block text-sm font-medium mb-2">الوصف</label>
+                        <textarea id="task-desc" placeholder="الوصف" class="bg-gray-700 text-gray-100 p-3 rounded-lg w-full h-28 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="وصف المهمة"></textarea>
+                    </div>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition">إضافة</button>
+                </form>
+            </div>
+            <div class="tab-content hidden" id="goal-tab">
+                <form id="goal-form" class="grid gap-6">
+                    <div class="form-group">
+                        <label for="goal-title" class="block text-sm font-medium mb-2">عنوان الهدف</label>
+                        <input type="text" id="goal-title" placeholder="مثال: إكمال كورس Front-End" required class="bg-gray-700 text-gray-100 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="عنوان الهدف">
+                    </div>
+                    <div class="form-group">
+                        <label for="goal-date" class="block text-sm font-medium mb-2">التاريخ النهائي</label>
+                        <input type="date" id="goal-date" required class="bg-gray-700 text-gray-100 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="تاريخ الهدف">
+                    </div>
+                    <div class="form-group">
+                        <label for="goal-priority" class="block text-sm font-medium mb-2">الأولوية</label>
+                        <select id="goal-priority" class="bg-gray-700 text-gray-100 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="أولوية الهدف">
+                            <option value="high">عالية</option>
+                            <option value="medium" selected>متوسطة</option>
+                            <option value="low">منخفضة</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="goal-subtasks" class="block text-sm font-medium mb-2">الدروس (كل درس في سطر)</label>
+                        <textarea id="goal-subtasks" placeholder="مثال:\nتعلم HTML\nتعلم CSS\nتعلم JavaScript" class="bg-gray-700 text-gray-100 p-3 rounded-lg w-full h-28 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="الدروس"></textarea>
+                    </div>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition">إضافة</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="notification" class="notification fixed top-4 right-4 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg opacity-0 transform translate-y-[-20px] transition-all duration-300 z-50"></div>
+    <script src="utils.js"></script>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
